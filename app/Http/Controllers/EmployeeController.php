@@ -68,18 +68,18 @@ class EmployeeController extends Controller
      */
     public function update(Request $request)
     { 
-        
+        $employee = Employee::findOrFail( $request->employee_id);
 
         $validatedData = $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email|unique:employees,email,'.$request->employee_id,
-            'mobile_number' => 'required|numeric|digits:11|unique:employees,mobile_number,'.$request->employee_id,
+            'email' => 'required|email|unique:employees,email,'.$employee->id,
+            'mobile_number' => 'required|numeric|digits:11|unique:employees,mobile_number,'.$employee->id,
             'designation' => 'required|max:255',
         ]);
 
 
         if($validatedData){
-            $employee = Employee::findOrFail( $request->employee_id);
+
             $employee->name=$request->name;
             $employee->email=$request->email;
             $employee->mobile_number=$request->mobile_number;
