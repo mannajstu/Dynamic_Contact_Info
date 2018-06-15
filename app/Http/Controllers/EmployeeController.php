@@ -16,7 +16,9 @@ class EmployeeController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
+
+    //Show The Toatl Employee Detail ,10 per page
     public function index()
     {
         $employee=Employee::Paginate(10);
@@ -25,7 +27,7 @@ class EmployeeController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Employee in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -33,14 +35,19 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {  
 
-       $validatedData = $request->validate([
+     $validatedData = $request->validate([
         'name' => 'required|max:255',
         'email' => 'required|email|unique:employees',
         'mobile_number' => 'required|numeric|unique:employees|digits:11',
         'designation' => 'required|max:255',
     ]);
+// Bangladeshi phone number Validator
+     $valid_number=preg_match("/^(?:\+?88|0088)?01[15-9]\d{8}$/", $request->mobile_number);
+     if(!$valid_number){
+        return back()->with('message', 'Phone Number Not Valid');
 
-       if($validatedData){
+    }
+    else if($validatedData ){
         $employee = new Employee;
         $employee->name=$request->name;
         $employee->email=$request->email;
@@ -50,8 +57,8 @@ class EmployeeController extends Controller
         return back()->with('message', 'Employee Info Save Successfully');
     }
     else {
-     return back()->with('message', 'Employee Info Save UnSuccessfully');
- }
+       return back()->with('message', 'Employee Info Save UnSuccessfully');
+   }
 
 
 
@@ -88,9 +95,9 @@ class EmployeeController extends Controller
             return back()->with('message', 'Employee Info Update Successfully');
         }
         else {
-         return back()->with('message', 'Employee Info Update UnSuccessfully');
-     }
- }
+           return back()->with('message', 'Employee Info Update UnSuccessfully');
+       }
+   }
 
     /**
      * Remove the specified resource from storage.
